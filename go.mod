@@ -3,8 +3,10 @@ module github.com/Marcos-Pablo/goth-stack-kickstarter
 go 1.26.2
 
 require (
+	github.com/Oudwins/tailwind-merge-go v0.2.1
 	github.com/a-h/templ v0.3.1001
 	github.com/gin-gonic/gin v1.12.0
+	github.com/templui/templui v1.10.0
 )
 
 require (

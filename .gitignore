@@ -2,3 +2,4 @@ tmp/
 main
 assets/css/output.css
 views/*_templ.go
+components/**/*_templ.go
