@@ -1,19 +1,17 @@
 package handler
 
 import (
-	"context"
 	"net/http"
 
 	"github.com/a-h/templ"
-	"github.com/gin-gonic/gin"
 )
 
-func Render(ctx *gin.Context, status int, cmp templ.Component) {
-	ctx.Status(status)
-	ctx.Header("Content-Type", "text/html; charset=utf-8")
-	if err := cmp.Render(context.Background(), ctx.Writer); err != nil {
-		ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
-			"error": "failed to render template",
-		})
+func Render(w http.ResponseWriter, r *http.Request, status int, cmp templ.Component) error {
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.WriteHeader(status)
+	if err := cmp.Render(r.Context(), w); err != nil {
+		return err
 	}
+
+	return nil
 }

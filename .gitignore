@@ -4,4 +4,8 @@ assets/css/output.css
 views/*_templ.go
 components/**/*_templ.go
 *.db
+*.db-*
 .env
+.idea/
+.vscode/
+.DS_Store

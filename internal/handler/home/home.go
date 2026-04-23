@@ -6,7 +6,6 @@ import (
 	"github.com/Marcos-Pablo/goth-stack-kickstarter/internal/app"
 	"github.com/Marcos-Pablo/goth-stack-kickstarter/internal/handler"
 	"github.com/Marcos-Pablo/goth-stack-kickstarter/views"
-	"github.com/gin-gonic/gin"
 )
 
 type Handler struct {
@@ -17,6 +16,6 @@ func New(app *app.App) *Handler {
 	return &Handler{app: app}
 }
 
-func (h *Handler) Index(ctx *gin.Context) {
-	handler.Render(ctx, http.StatusOK, views.Home())
+func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
+	handler.Render(w, r, http.StatusOK, views.Home())
 }

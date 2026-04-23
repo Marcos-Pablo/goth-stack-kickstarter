@@ -2,11 +2,13 @@ package main
 
 import (
 	"log"
+	"net/http"
 
 	"github.com/Marcos-Pablo/goth-stack-kickstarter/internal/app"
 	"github.com/Marcos-Pablo/goth-stack-kickstarter/internal/handler/auth"
 	"github.com/Marcos-Pablo/goth-stack-kickstarter/internal/handler/home"
-	"github.com/gin-gonic/gin"
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 
 	_ "modernc.org/sqlite"
 )
@@ -20,10 +22,13 @@ func main() {
 	_ = auth.New(app)
 	homeH := home.New(app)
 
-	engine := gin.Default()
-	engine.Static("/assets", "./assets")
+	r := chi.NewRouter()
+	r.Use(middleware.Recoverer)
 
-	engine.GET("/", homeH.Index)
+	fs := http.FileServer(http.Dir("./assets"))
+	r.Handle("/assets/*", http.StripPrefix("/assets/", fs))
 
-	log.Fatal(engine.Run(":8080"))
+	r.Get("/", homeH.Index)
+
+	log.Fatal(http.ListenAndServe(":8080", r))
 }
