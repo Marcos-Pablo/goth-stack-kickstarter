@@ -3,23 +3,28 @@ package app
 import (
 	"database/sql"
 	"fmt"
+	"log/slog"
 
 	"github.com/Marcos-Pablo/goth-stack-kickstarter/internal/config"
 	"github.com/Marcos-Pablo/goth-stack-kickstarter/internal/db"
+	"github.com/Marcos-Pablo/goth-stack-kickstarter/internal/logging"
 )
 
 type App struct {
 	Cfg     *config.Config
 	DB      *sql.DB
 	Queries *db.Queries
+	Logger  *slog.Logger
 }
 
 func New() (*App, error) {
 	cfg, err := config.Load()
 
 	if err != nil {
-		return nil, fmt.Errorf("failed to load config: %v", err)
+		return nil, fmt.Errorf("failed to load config: %w", err)
 	}
+
+	logger := logging.New(cfg)
 
 	sqlDB, err := sql.Open("sqlite", buildDSN(cfg))
 	if err != nil {
@@ -36,6 +41,7 @@ func New() (*App, error) {
 		Cfg:     cfg,
 		DB:      sqlDB,
 		Queries: db.New(sqlDB),
+		Logger:  logger,
 	}, nil
 }
 
