@@ -8,13 +8,16 @@ import (
 	"github.com/Marcos-Pablo/goth-stack-kickstarter/internal/config"
 	"github.com/Marcos-Pablo/goth-stack-kickstarter/internal/db"
 	"github.com/Marcos-Pablo/goth-stack-kickstarter/internal/logging"
+	"github.com/Marcos-Pablo/goth-stack-kickstarter/internal/session"
+	"github.com/alexedwards/scs/v2"
 )
 
 type App struct {
-	Cfg     *config.Config
-	DB      *sql.DB
-	Queries *db.Queries
-	Logger  *slog.Logger
+	Cfg      *config.Config
+	DB       *sql.DB
+	Queries  *db.Queries
+	Logger   *slog.Logger
+	Sessions *scs.SessionManager
 }
 
 func New() (*App, error) {
@@ -37,11 +40,14 @@ func New() (*App, error) {
 		return nil, fmt.Errorf("ping db: %w", err)
 	}
 
+	sessions := session.New(sqlDB, cfg)
+
 	return &App{
-		Cfg:     cfg,
-		DB:      sqlDB,
-		Queries: db.New(sqlDB),
-		Logger:  logger,
+		Cfg:      cfg,
+		DB:       sqlDB,
+		Queries:  db.New(sqlDB),
+		Logger:   logger,
+		Sessions: sessions,
 	}, nil
 }
 

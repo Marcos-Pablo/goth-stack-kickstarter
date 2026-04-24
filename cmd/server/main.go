@@ -36,6 +36,7 @@ func main() {
 	r.Use(slogchi.NewWithConfig(a.Logger, slogchi.Config{
 		WithRequestID: true,
 	}))
+	r.Use(a.Sessions.LoadAndSave)
 
 	fs := http.FileServer(http.Dir("./assets"))
 	r.Handle("/assets/*", http.StripPrefix("/assets/", fs))
