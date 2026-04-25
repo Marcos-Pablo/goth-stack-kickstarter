@@ -45,12 +45,12 @@ templ SignIn(formData SignInForm) {
 						<p class="label text-error">{ msg }</p>
 					}
 				</fieldset>
-				<button type="submit" class="btn btn-primary w-full">
-					Login
-				</button>
 				if formData.GeneralError != "" {
 					<p class="label text-error">{ formData.GeneralError }</p>
 				}
+				<button type="submit" class="btn btn-primary w-full">
+					Login
+				</button>
 				<p class="text-sm">
 					Don't have an account? <a href="/auth/sign-up" class="link link-primary">Sign Up</a>
 				</p>
