@@ -3,23 +3,21 @@ module github.com/Marcos-Pablo/goth-stack-kickstarter
 go 1.26.2
 
 require (
-	github.com/Oudwins/tailwind-merge-go v0.2.1
 	github.com/a-h/templ v0.3.1001
+	github.com/alexedwards/argon2id v1.0.0
 	github.com/alexedwards/scs/sqlite3store v0.0.0-20251002162104-209de6e426de
 	github.com/alexedwards/scs/v2 v2.9.0
 	github.com/go-chi/chi/v5 v5.2.5
+	github.com/google/uuid v1.6.0
 	github.com/joho/godotenv v1.5.1
 	github.com/lmittmann/tint v1.1.3
 	github.com/mattn/go-isatty v0.0.20
 	github.com/samber/slog-chi v1.19.0
-	github.com/templui/templui v1.10.0
 	modernc.org/sqlite v1.49.1
 )
 
 require (
-	github.com/alexedwards/argon2id v1.0.0 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
-	github.com/google/uuid v1.6.0 // indirect
 	github.com/ncruces/go-strftime v1.0.0 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
 	go.opentelemetry.io/otel v1.29.0 // indirect
