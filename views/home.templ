@@ -1,15 +1,11 @@
 package views
 
-import "github.com/Marcos-Pablo/goth-stack-kickstarter/components/button"
-
 templ Home() {
 	@Layout("Hello, GoTH") {
 		<main class="min-h-screen flex items-center justify-center bg-slate-50">
 			<div class="text-center">
 				<h1 class="text-5xl font-bold text-blue-600">Hello, GoTH stack!</h1>
-				@button.Button(button.Props{}) {
-					Click me
-				}
+				<button class="btn" hx-post="/auth/sign-out">Sign out</button>
 			</div>
 		</main>
 	}
