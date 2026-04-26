@@ -11,64 +11,62 @@ type SignUpForm struct {
 }
 
 templ SignUp(formData SignUpForm) {
-	@Layout("Sign Up") {
-		<main class="min-h-screen flex items-center justify-center px-4">
-			<form
-				method="post"
-				action="/auth/sign-up"
-				class="card bg-base-100 shadow-md w-full max-w-sm p-6 space-y-4"
-			>
-				<h1 class="text-2xl font-bold">Sign up</h1>
-				<fieldset class="fieldset">
-					<legend class="fieldset-legend">Email</legend>
-					<input
-						type="email"
-						name="email"
-						class="input w-full"
-						placeholder="m@example.com"
-						value={ formData.Email }
-						required
-					/>
-					if msg, ok := formData.FieldErrors["email"]; ok {
-						<p class="label text-error">{ msg }</p>
-					}
-				</fieldset>
-				<fieldset class="fieldset">
-					<legend class="fieldset-legend">Password</legend>
-					<input
-						type="password"
-						name="password"
-						class="input w-full"
-						placeholder="********"
-						required
-					/>
-					if msg, ok := formData.FieldErrors["password"]; ok {
-						<p class="label text-error">{ msg }</p>
-					}
-				</fieldset>
-				<fieldset class="fieldset">
-					<legend class="fieldset-legend">Confirm password</legend>
-					<input
-						type="password"
-						name="password_confirmation"
-						class="input w-full"
-						placeholder="********"
-						required
-					/>
-					if msg, ok := formData.FieldErrors["password_confirmation"]; ok {
-						<p class="label text-error">{ msg }</p>
-					}
-				</fieldset>
-				if formData.GeneralError != "" {
-					<p class="label text-error">{ formData.GeneralError }</p>
+	@AuthShell("Sign Up") {
+		<form
+			method="post"
+			action="/auth/sign-up"
+			class="card bg-base-100 shadow-md w-full max-w-sm p-6 space-y-4"
+		>
+			<h1 class="text-2xl font-bold">Sign up</h1>
+			<fieldset class="fieldset">
+				<legend class="fieldset-legend">Email</legend>
+				<input
+					type="email"
+					name="email"
+					class="input w-full"
+					placeholder="m@example.com"
+					value={ formData.Email }
+					required
+				/>
+				if msg, ok := formData.FieldErrors["email"]; ok {
+					<p class="label text-error">{ msg }</p>
 				}
-				<button type="submit" class="btn btn-primary w-full">
-					Sign up
-				</button>
-				<p class="text-sm">
-					Already have an account? <a href="/auth/sign-in" class="link link-primary">Sign In</a>
-				</p>
-			</form>
-		</main>
+			</fieldset>
+			<fieldset class="fieldset">
+				<legend class="fieldset-legend">Password</legend>
+				<input
+					type="password"
+					name="password"
+					class="input w-full"
+					placeholder="********"
+					required
+				/>
+				if msg, ok := formData.FieldErrors["password"]; ok {
+					<p class="label text-error">{ msg }</p>
+				}
+			</fieldset>
+			<fieldset class="fieldset">
+				<legend class="fieldset-legend">Confirm password</legend>
+				<input
+					type="password"
+					name="password_confirmation"
+					class="input w-full"
+					placeholder="********"
+					required
+				/>
+				if msg, ok := formData.FieldErrors["password_confirmation"]; ok {
+					<p class="label text-error">{ msg }</p>
+				}
+			</fieldset>
+			if formData.GeneralError != "" {
+				<p class="label text-error">{ formData.GeneralError }</p>
+			}
+			<button type="submit" class="btn btn-primary w-full">
+				Sign up
+			</button>
+			<p class="text-sm">
+				Already have an account? <a href="/auth/sign-in" class="link link-primary">Sign In</a>
+			</p>
+		</form>
 	}
 }

@@ -49,7 +49,7 @@ func main() {
 	})
 
 	r.Group(func(r chi.Router) {
-		r.Use(middleware.RequireAuth(a.Sessions))
+		r.Use(middleware.RequireAuth(a.Sessions, a.Queries))
 		r.Get("/", homeH.Index)
 		r.Post("/auth/sign-out", authH.SignOut)
 	})
