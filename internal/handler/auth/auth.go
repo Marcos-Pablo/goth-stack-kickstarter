@@ -93,6 +93,7 @@ func (h *Handler) SignUp(w http.ResponseWriter, r *http.Request) {
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 		Email:     form.Email,
+		Name:      form.Name,
 		Password:  hashedPassword,
 	})
 
@@ -135,6 +136,7 @@ func parseAndValidateSignUpform(r *http.Request) views.SignUpForm {
 
 	form := views.SignUpForm{
 		Email:                r.PostForm.Get("email"),
+		Name:                 r.PostForm.Get("name"),
 		Password:             r.PostForm.Get("password"),
 		PasswordConfirmation: r.PostForm.Get("password_confirmation"),
 	}
@@ -142,6 +144,9 @@ func parseAndValidateSignUpform(r *http.Request) views.SignUpForm {
 	form.Check(validator.NotBlank(form.Email), "email", "Email is required")
 	form.Check(validator.IsEmail(form.Email), "email", "Enter a valid email")
 	form.Check(validator.MaxChars(form.Email, 255), "email", "Email is too long")
+
+	form.Check(validator.NotBlank(form.Name), "name", "Name is required")
+	form.Check(validator.MaxChars(form.Name, 255), "name", "Name is too long")
 
 	form.Check(validator.NotBlank(form.Password), "password", "Password is required")
 	form.Check(validator.MinChars(form.Password, 3), "password", "At least 3 characters")

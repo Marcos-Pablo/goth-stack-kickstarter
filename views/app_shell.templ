@@ -1,9 +1,5 @@
 package views
 
-type User struct {
-	Email string
-}
-
 templ AppShell(title string, user User) {
 	@Base(title) {
 		<div class="navbar bg-base-200 shadow-sm">
@@ -20,7 +16,7 @@ templ AppShell(title string, user User) {
 						role="button"
 						class="btn btn-ghost"
 					>
-						{ user.Email }
+						{ user.Name }
 					</div>
 					<ul
 						tabindex="0"

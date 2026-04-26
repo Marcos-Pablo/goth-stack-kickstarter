@@ -21,5 +21,6 @@ func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
 	user, _ := middleware.UserFrom(r.Context())
 	handler.Render(w, r, http.StatusOK, views.Home(views.User{
 		Email: user.Email,
+		Name:  user.Name,
 	}))
 }

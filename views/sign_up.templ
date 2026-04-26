@@ -4,6 +4,7 @@ import "github.com/Marcos-Pablo/goth-stack-kickstarter/internal/validator"
 
 type SignUpForm struct {
 	Email                string
+	Name                 string
 	Password             string
 	PasswordConfirmation string
 	GeneralError         string
@@ -29,6 +30,20 @@ templ SignUp(formData SignUpForm) {
 					required
 				/>
 				if msg, ok := formData.FieldErrors["email"]; ok {
+					<p class="label text-error">{ msg }</p>
+				}
+			</fieldset>
+			<fieldset class="fieldset">
+				<legend class="fieldset-legend">Name</legend>
+				<input
+					type="text"
+					name="name"
+					class="input w-full"
+					placeholder="John Doe"
+					value={ formData.Name }
+					required
+				/>
+				if msg, ok := formData.FieldErrors["name"]; ok {
 					<p class="label text-error">{ msg }</p>
 				}
 			</fieldset>

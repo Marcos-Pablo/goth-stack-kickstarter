@@ -12,11 +12,11 @@ import (
 
 const createUser = `-- name: CreateUser :one
 INSERT INTO
-  users (id, created_at, updated_at, email, password)
+  users (id, created_at, updated_at, email, name, password)
 VALUES
-  (?, ?, ?, ?, ?)
+  (?, ?, ?, ?, ?, ?)
 RETURNING
-  id, created_at, updated_at, email, password
+  id, created_at, updated_at, email, name, password
 `
 
 type CreateUserParams struct {
@@ -24,6 +24,7 @@ type CreateUserParams struct {
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	Email     string
+	Name      string
 	Password  string
 }
 
@@ -33,6 +34,7 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 		arg.CreatedAt,
 		arg.UpdatedAt,
 		arg.Email,
+		arg.Name,
 		arg.Password,
 	)
 	var i User
@@ -41,6 +43,7 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.Email,
+		&i.Name,
 		&i.Password,
 	)
 	return i, err
@@ -48,7 +51,7 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 
 const getUserByEmail = `-- name: GetUserByEmail :one
 SELECT
-  id, created_at, updated_at, email, password
+  id, created_at, updated_at, email, name, password
 FROM
   users
 WHERE
@@ -65,6 +68,7 @@ func (q *Queries) GetUserByEmail(ctx context.Context, email string) (User, error
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.Email,
+		&i.Name,
 		&i.Password,
 	)
 	return i, err
@@ -72,7 +76,7 @@ func (q *Queries) GetUserByEmail(ctx context.Context, email string) (User, error
 
 const getUserById = `-- name: GetUserById :one
 SELECT
-  id, created_at, updated_at, email, password
+  id, created_at, updated_at, email, name, password
 FROM
   users
 WHERE
@@ -89,6 +93,7 @@ func (q *Queries) GetUserById(ctx context.Context, id string) (User, error) {
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.Email,
+		&i.Name,
 		&i.Password,
 	)
 	return i, err
