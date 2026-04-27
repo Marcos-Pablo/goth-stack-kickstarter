@@ -1,14 +1,5 @@
 package views
 
-import "github.com/Marcos-Pablo/goth-stack-kickstarter/internal/validator"
-
-type SignInForm struct {
-	Email        string
-	Password     string
-	GeneralError string
-	validator.Validator
-}
-
 templ SignIn(formData SignInForm) {
 	@AuthShell("Sign In") {
 		<form
