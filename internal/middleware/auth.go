@@ -17,7 +17,7 @@ func RequireAuth(sm *scs.SessionManager, q *db.Queries) func(http.Handler) http.
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			userID := sm.GetString(r.Context(), "user_id")
 			if userID == "" {
-				http.Redirect(w, r, "/auth/sign-in", http.StatusSeeOther)
+				http.Redirect(w, r, "/sign-in", http.StatusSeeOther)
 				return
 			}
 
@@ -25,7 +25,7 @@ func RequireAuth(sm *scs.SessionManager, q *db.Queries) func(http.Handler) http.
 
 			if err != nil {
 				_ = sm.Destroy(r.Context())
-				http.Redirect(w, r, "/auth/sign-in", http.StatusSeeOther)
+				http.Redirect(w, r, "/sign-in", http.StatusSeeOther)
 				return
 			}
 

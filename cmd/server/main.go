@@ -40,7 +40,7 @@ func main() {
 	fs := http.FileServer(http.Dir("./assets"))
 	r.Handle("/assets/*", http.StripPrefix("/assets/", fs))
 
-	r.Route("/auth", func(r chi.Router) {
+	r.Group(func(r chi.Router) {
 		r.Get("/sign-in", authH.SignInPage)
 		r.Post("/sign-in", authH.SignIn)
 
@@ -51,7 +51,8 @@ func main() {
 	r.Group(func(r chi.Router) {
 		r.Use(middleware.RequireAuth(a.Sessions, a.Queries))
 		r.Get("/", homeH.Index)
-		r.Post("/auth/sign-out", authH.SignOut)
+		r.Get("/profile", profileH.Index)
+		r.Post("/sign-out", authH.SignOut)
 	})
 
 	if err = http.ListenAndServe(":8080", r); err != nil {

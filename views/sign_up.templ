@@ -15,7 +15,7 @@ templ SignUp(formData SignUpForm) {
 	@AuthShell("Sign Up") {
 		<form
 			method="post"
-			action="/auth/sign-up"
+			action="/sign-up"
 			class="card bg-base-100 shadow-md w-full max-w-sm p-6 space-y-4"
 		>
 			<h1 class="text-2xl font-bold">Sign up</h1>
@@ -80,7 +80,7 @@ templ SignUp(formData SignUpForm) {
 				Sign up
 			</button>
 			<p class="text-sm">
-				Already have an account? <a href="/auth/sign-in" class="link link-primary">Sign In</a>
+				Already have an account? <a href="/sign-in" class="link link-primary">Sign In</a>
 			</p>
 		</form>
 	}
