@@ -1,0 +1,12 @@
+package views
+
+templ Profile(user User) {
+	@AppShell("profile", user) {
+		<div class="profile">
+			<h1>Profile</h1>
+			<p>Name: { user.Name }</p>
+			<p>Email: { user.Email }</p>
+			<!-- Add more profile details as needed -->
+		</div>
+	}
+}

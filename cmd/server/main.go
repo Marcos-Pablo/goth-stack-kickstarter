@@ -9,6 +9,7 @@ import (
 	"github.com/Marcos-Pablo/goth-stack-kickstarter/internal/app"
 	"github.com/Marcos-Pablo/goth-stack-kickstarter/internal/handler/auth"
 	"github.com/Marcos-Pablo/goth-stack-kickstarter/internal/handler/home"
+	"github.com/Marcos-Pablo/goth-stack-kickstarter/internal/handler/profile"
 	"github.com/Marcos-Pablo/goth-stack-kickstarter/internal/middleware"
 	"github.com/go-chi/chi/v5"
 	chiMid "github.com/go-chi/chi/v5/middleware"
@@ -29,6 +30,7 @@ func main() {
 
 	homeH := home.New(a)
 	authH := auth.New(a)
+	profileH := profile.New(a)
 
 	r := chi.NewRouter()
 	r.Use(chiMid.RequestID)
