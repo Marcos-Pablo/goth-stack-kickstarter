@@ -66,6 +66,12 @@ func (h *Handler) SignIn(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if err := h.app.Sessions.RenewToken(r.Context()); err != nil {
+		slogchi.AddCustomAttributes(r, slog.Any("error", err))
+		handler.Render(w, r, http.StatusInternalServerError, views.ServerError())
+		return
+	}
+
 	h.app.Sessions.Put(r.Context(), "user_id", user.ID)
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
@@ -107,6 +113,13 @@ func (h *Handler) SignUp(w http.ResponseWriter, r *http.Request) {
 		handler.Render(w, r, http.StatusInternalServerError, views.ServerError())
 		return
 	}
+
+	if err := h.app.Sessions.RenewToken(r.Context()); err != nil {
+		slogchi.AddCustomAttributes(r, slog.Any("error", err))
+		handler.Render(w, r, http.StatusInternalServerError, views.ServerError())
+		return
+	}
+
 	h.app.Sessions.Put(r.Context(), "user_id", user.ID)
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
@@ -117,12 +130,12 @@ func (h *Handler) SignOut(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if r.Header.Get("HX-Request") == "true" {
-		w.Header().Set("HX-Redirect", "/auth/sign-in")
+		w.Header().Set("HX-Redirect", "/sign-in")
 		w.WriteHeader(http.StatusSeeOther)
 		return
 	}
 
-	http.Redirect(w, r, "/auth/sign-in", http.StatusSeeOther)
+	http.Redirect(w, r, "/sign-in", http.StatusSeeOther)
 }
 
 func parseAndValidateSignUpform(r *http.Request) views.SignUpForm {
