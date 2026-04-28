@@ -25,3 +25,29 @@ WHERE
   id = ?
 LIMIT
   1;
+
+-- name: UpdatePersonalInfo :one
+UPDATE users
+SET
+  name = ?,
+  email = ?,
+  updated_at = ?
+WHERE
+  id = ?
+RETURNING
+  *;
+
+-- name: UpdatePassword :one
+UPDATE users
+SET
+  password = ?,
+  updated_at = ?
+WHERE
+  id = ?
+RETURNING
+  *;
+
+-- name: DeleteUser :exec
+DELETE FROM users
+WHERE
+  id = ?;

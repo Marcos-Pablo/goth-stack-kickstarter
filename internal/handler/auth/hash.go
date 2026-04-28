@@ -4,7 +4,7 @@ import (
 	"github.com/alexedwards/argon2id"
 )
 
-func hashPassword(password string) (string, error) {
+func HashPassword(password string) (string, error) {
 	hash, err := argon2id.CreateHash(password, argon2id.DefaultParams)
 
 	if err != nil {
@@ -14,7 +14,7 @@ func hashPassword(password string) (string, error) {
 	return hash, nil
 }
 
-func checkPasswordHash(password, hash string) (bool, error) {
+func CheckPasswordHash(password, hash string) (bool, error) {
 	match, err := argon2id.ComparePasswordAndHash(password, hash)
 
 	if err != nil {

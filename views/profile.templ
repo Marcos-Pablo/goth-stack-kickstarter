@@ -1,12 +1,170 @@
 package views
 
-templ Profile(user User) {
-	@AppShell("profile", user) {
-		<div class="profile">
-			<h1>Profile</h1>
-			<p>Name: { user.Name }</p>
-			<p>Email: { user.Email }</p>
-			<!-- Add more profile details as needed -->
+templ Profile(user User, profile ProfileForm, changePassword ChangePasswordForm) {
+	@AppShell("Profile", user) {
+		<div class="max-w-2xl mx-auto space-y-6">
+			@ProfilePersonalInfoCard(profile, "")
+			@ProfileSecurityCard(changePassword, "")
+			@ProfileDangerZoneCard()
 		</div>
 	}
+}
+
+templ ProfilePersonalInfoCard(profile ProfileForm, successMsg string) {
+	<div id="personal-info-card" class="card bg-base-100 shadow-md">
+		<div class="card-body">
+			<h2 class="card-title">Personal Information</h2>
+			if successMsg != "" {
+				<div class="alert alert-success">
+					<button type="button" class="btn btn-sm btn-ghost" data-close-alert>×</button>
+					{ successMsg }
+				</div>
+			}
+			<form
+				hx-post="/profile"
+				hx-target="#personal-info-card"
+				hx-swap="outerHTML"
+				class="space-y-4"
+			>
+				<fieldset class="fieldset">
+					<legend class="fieldset-legend">Name</legend>
+					<input
+						type="text"
+						name="name"
+						class="input w-full"
+						placeholder="John Doe"
+						value={ profile.Name }
+						required
+					/>
+					if msg, ok := profile.FieldErrors["name"]; ok {
+						<p class="label text-error">{ msg }</p>
+					}
+				</fieldset>
+				<fieldset class="fieldset">
+					<legend class="fieldset-legend">Email</legend>
+					<input
+						type="email"
+						name="email"
+						class="input w-full"
+						placeholder="m@example.com"
+						value={ profile.Email }
+						required
+					/>
+					if msg, ok := profile.FieldErrors["email"]; ok {
+						<p class="label text-error">{ msg }</p>
+					}
+				</fieldset>
+				if profile.GeneralError != "" {
+					<p class="label text-error">{ profile.GeneralError }</p>
+				}
+				<div class="card-actions justify-end">
+					<button type="submit" class="btn btn-primary">Save Changes</button>
+				</div>
+			</form>
+		</div>
+	</div>
+}
+
+templ ProfileSecurityCard(changePassword ChangePasswordForm, successMsg string) {
+	<div id="security-card" class="card bg-base-100 shadow-md">
+		<div class="card-body">
+			<h2 class="card-title">Security</h2>
+			if successMsg != "" {
+				<div class="alert alert-success">
+					<button type="button" class="btn btn-sm btn-ghost" data-close-alert>×</button>
+					{ successMsg }
+				</div>
+			}
+			<form
+				hx-post="/change-password"
+				hx-target="#security-card"
+				hx-swap="outerHTML"
+				class="space-y-4"
+			>
+				<fieldset class="fieldset">
+					<legend class="fieldset-legend">Current Password</legend>
+					<input
+						type="password"
+						name="current_password"
+						class="input w-full"
+						placeholder="********"
+						required
+					/>
+					if msg, ok := changePassword.FieldErrors["current_password"]; ok {
+						<p class="label text-error">{ msg }</p>
+					}
+				</fieldset>
+				<fieldset class="fieldset">
+					<legend class="fieldset-legend">New Password</legend>
+					<input
+						type="password"
+						name="new_password"
+						class="input w-full"
+						placeholder="********"
+						required
+					/>
+					if msg, ok := changePassword.FieldErrors["new_password"]; ok {
+						<p class="label text-error">{ msg }</p>
+					}
+				</fieldset>
+				<fieldset class="fieldset">
+					<legend class="fieldset-legend">Confirm New Password</legend>
+					<input
+						type="password"
+						name="new_password_confirmation"
+						class="input w-full"
+						placeholder="********"
+						required
+					/>
+					if msg, ok := changePassword.FieldErrors["new_password_confirmation"]; ok {
+						<p class="label text-error">{ msg }</p>
+					}
+				</fieldset>
+				if changePassword.GeneralError != "" {
+					<p class="label text-error">{ changePassword.GeneralError }</p>
+				}
+				<div class="card-actions justify-end">
+					<button type="submit" class="btn btn-primary">Update Password</button>
+				</div>
+			</form>
+		</div>
+	</div>
+}
+
+templ ProfileDangerZoneCard() {
+	<div class="card bg-base-100 shadow-md border-error border">
+		<div class="card-body">
+			<h2 class="card-title text-error">Danger Zone</h2>
+			<p class="text-base-content/70">
+				Once you delete your account, there is no going back. Please be certain.
+			</p>
+			<div class="card-actions justify-end">
+				<button
+					class="btn btn-error"
+					onclick="document.getElementById('delete_account_modal').showModal()"
+				>
+					Delete Account
+				</button>
+			</div>
+		</div>
+	</div>
+	<dialog id="delete_account_modal" class="modal">
+		<div class="modal-box">
+			<h3 class="text-lg font-bold text-error">Delete Account</h3>
+			<p class="py-4">
+				Are you sure you want to delete your account? This action cannot be undone.
+			</p>
+			<div class="modal-action">
+				<form method="dialog">
+					<button class="btn">Cancel</button>
+				</form>
+				<form method="post" action="/delete-account">
+					<button type="submit" class="btn btn-error">Delete Account</button>
+				</form>
+			</div>
+		</div>
+		<form method="dialog" class="modal-backdrop">
+			<button>close</button>
+		</form>
+	</dialog>
 }

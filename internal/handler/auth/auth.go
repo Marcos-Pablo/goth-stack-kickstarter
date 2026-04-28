@@ -10,7 +10,6 @@ import (
 	"github.com/Marcos-Pablo/goth-stack-kickstarter/internal/app"
 	"github.com/Marcos-Pablo/goth-stack-kickstarter/internal/db"
 	"github.com/Marcos-Pablo/goth-stack-kickstarter/internal/handler"
-	"github.com/Marcos-Pablo/goth-stack-kickstarter/internal/validator"
 	"github.com/Marcos-Pablo/goth-stack-kickstarter/views"
 	"github.com/google/uuid"
 	slogchi "github.com/samber/slog-chi"
@@ -52,7 +51,7 @@ func (h *Handler) SignIn(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	match, err := checkPasswordHash(form.Password, user.Password)
+	match, err := CheckPasswordHash(form.Password, user.Password)
 
 	if err != nil {
 		slogchi.AddCustomAttributes(r, slog.Any("error", err))
@@ -87,7 +86,7 @@ func (h *Handler) SignUp(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	hashedPassword, err := hashPassword(form.Password)
+	hashedPassword, err := HashPassword(form.Password)
 	if err != nil {
 		slogchi.AddCustomAttributes(r, slog.Any("error", err))
 		handler.Render(w, r, http.StatusInternalServerError, views.ServerError())
@@ -153,18 +152,8 @@ func parseAndValidateSignUpform(r *http.Request) views.SignUpForm {
 		Password:             r.PostForm.Get("password"),
 		PasswordConfirmation: r.PostForm.Get("password_confirmation"),
 	}
+	form.Validate()
 
-	form.Check(validator.NotBlank(form.Email), "email", "Email is required")
-	form.Check(validator.IsEmail(form.Email), "email", "Enter a valid email")
-	form.Check(validator.MaxChars(form.Email, 255), "email", "Email is too long")
-
-	form.Check(validator.NotBlank(form.Name), "name", "Name is required")
-	form.Check(validator.MaxChars(form.Name, 255), "name", "Name is too long")
-
-	form.Check(validator.NotBlank(form.Password), "password", "Password is required")
-	form.Check(validator.MinChars(form.Password, 3), "password", "At least 3 characters")
-	form.Check(validator.MaxChars(form.Password, 72), "password", "At most 72 characters")
-	form.Check(form.Password == form.PasswordConfirmation, "password_confirmation", "Passwords do not match")
 	return form
 }
 
@@ -182,12 +171,6 @@ func parseAndValidateSignInform(r *http.Request) views.SignInForm {
 		Password: r.PostForm.Get("password"),
 	}
 
-	form.Check(validator.NotBlank(form.Email), "email", "Email is required")
-	form.Check(validator.IsEmail(form.Email), "email", "Enter a valid email")
-	form.Check(validator.MaxChars(form.Email, 255), "email", "Email is too long")
-
-	form.Check(validator.NotBlank(form.Password), "password", "Password is required")
-	form.Check(validator.MinChars(form.Password, 3), "password", "At least 3 characters")
-	form.Check(validator.MaxChars(form.Password, 72), "password", "At most 72 characters")
+	form.Validate()
 	return form
 }

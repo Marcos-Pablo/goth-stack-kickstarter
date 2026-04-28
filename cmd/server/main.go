@@ -53,7 +53,10 @@ func main() {
 	r.Group(func(r chi.Router) {
 		r.Use(middleware.RequireAuth(a.Sessions, a.Queries))
 		r.Get("/", homeH.Index)
-		r.Get("/profile", profileH.Index)
+		r.Get("/profile", profileH.ProfilePage)
+		r.Post("/profile", profileH.UpdateProfile)
+		r.Post("/change-password", profileH.ChangePassword)
+		r.Post("/delete-account", profileH.DeleteAccount)
 		r.Post("/sign-out", authH.SignOut)
 	})
 
