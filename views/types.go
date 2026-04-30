@@ -14,9 +14,9 @@ func UserInitials(name string) string {
 }
 
 type User struct {
-	Email          string
-	Name           string
-	ProfilePicture string
+	Email string
+	Name  string
+	Avatar string
 }
 
 type SignInForm struct {

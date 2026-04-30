@@ -16,11 +16,11 @@ type Session struct {
 }
 
 type User struct {
-	ID                string
-	CreatedAt         time.Time
-	UpdatedAt         time.Time
-	Email             string
-	Name              string
-	Password          string
-	ProfilePictureUrl sql.NullString
+	ID         string
+	CreatedAt  time.Time
+	UpdatedAt  time.Time
+	Email      string
+	Name       string
+	Password   string
+	AvatarPath sql.NullString
 }

@@ -6,7 +6,7 @@ CREATE TABLE users (
   email TEXT NOT NULL UNIQUE,
   name TEXT NOT NULL,
   password TEXT NOT NULL,
-  profile_picture_url TEXT
+  avatar_path TEXT
 );
 
 -- +goose Down

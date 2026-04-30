@@ -19,8 +19,14 @@ func New(app *app.App) *Handler {
 
 func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
 	user, _ := middleware.UserFrom(r.Context())
-	handler.Render(w, r, http.StatusOK, views.Home(views.User{
+	vUser := views.User{
 		Email: user.Email,
 		Name:  user.Name,
-	}))
+	}
+
+	if user.AvatarPath.Valid {
+		vUser.Avatar = h.app.Storage.AvatarURL(user.AvatarPath.String)
+	}
+
+	handler.Render(w, r, http.StatusOK, views.Home(vUser))
 }

@@ -52,10 +52,10 @@ DELETE FROM users
 WHERE
   id = ?;
 
--- name: UpdateProfilePicture :one
+-- name: UpdateAvatar :one
 UPDATE users
 SET
-  profile_picture_url = ?,
+  avatar_path = ?,
   updated_at = ?
 WHERE
   id = ?
