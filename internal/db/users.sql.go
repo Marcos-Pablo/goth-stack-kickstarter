@@ -7,6 +7,7 @@ package db
 
 import (
 	"context"
+	"database/sql"
 	"time"
 )
 
@@ -16,7 +17,7 @@ INSERT INTO
 VALUES
   (?, ?, ?, ?, ?, ?)
 RETURNING
-  id, created_at, updated_at, email, name, password
+  id, created_at, updated_at, email, name, password, profile_picture_url
 `
 
 type CreateUserParams struct {
@@ -45,6 +46,7 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 		&i.Email,
 		&i.Name,
 		&i.Password,
+		&i.ProfilePictureUrl,
 	)
 	return i, err
 }
@@ -62,7 +64,7 @@ func (q *Queries) DeleteUser(ctx context.Context, id string) error {
 
 const getUserByEmail = `-- name: GetUserByEmail :one
 SELECT
-  id, created_at, updated_at, email, name, password
+  id, created_at, updated_at, email, name, password, profile_picture_url
 FROM
   users
 WHERE
@@ -81,13 +83,14 @@ func (q *Queries) GetUserByEmail(ctx context.Context, email string) (User, error
 		&i.Email,
 		&i.Name,
 		&i.Password,
+		&i.ProfilePictureUrl,
 	)
 	return i, err
 }
 
 const getUserById = `-- name: GetUserById :one
 SELECT
-  id, created_at, updated_at, email, name, password
+  id, created_at, updated_at, email, name, password, profile_picture_url
 FROM
   users
 WHERE
@@ -106,6 +109,7 @@ func (q *Queries) GetUserById(ctx context.Context, id string) (User, error) {
 		&i.Email,
 		&i.Name,
 		&i.Password,
+		&i.ProfilePictureUrl,
 	)
 	return i, err
 }
@@ -118,7 +122,7 @@ SET
 WHERE
   id = ?
 RETURNING
-  id, created_at, updated_at, email, name, password
+  id, created_at, updated_at, email, name, password, profile_picture_url
 `
 
 type UpdatePasswordParams struct {
@@ -137,6 +141,7 @@ func (q *Queries) UpdatePassword(ctx context.Context, arg UpdatePasswordParams) 
 		&i.Email,
 		&i.Name,
 		&i.Password,
+		&i.ProfilePictureUrl,
 	)
 	return i, err
 }
@@ -150,7 +155,7 @@ SET
 WHERE
   id = ?
 RETURNING
-  id, created_at, updated_at, email, name, password
+  id, created_at, updated_at, email, name, password, profile_picture_url
 `
 
 type UpdatePersonalInfoParams struct {
@@ -175,6 +180,39 @@ func (q *Queries) UpdatePersonalInfo(ctx context.Context, arg UpdatePersonalInfo
 		&i.Email,
 		&i.Name,
 		&i.Password,
+		&i.ProfilePictureUrl,
+	)
+	return i, err
+}
+
+const updateProfilePicture = `-- name: UpdateProfilePicture :one
+UPDATE users
+SET
+  profile_picture_url = ?,
+  updated_at = ?
+WHERE
+  id = ?
+RETURNING
+  id, created_at, updated_at, email, name, password, profile_picture_url
+`
+
+type UpdateProfilePictureParams struct {
+	ProfilePictureUrl sql.NullString
+	UpdatedAt         time.Time
+	ID                string
+}
+
+func (q *Queries) UpdateProfilePicture(ctx context.Context, arg UpdateProfilePictureParams) (User, error) {
+	row := q.db.QueryRowContext(ctx, updateProfilePicture, arg.ProfilePictureUrl, arg.UpdatedAt, arg.ID)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.Email,
+		&i.Name,
+		&i.Password,
+		&i.ProfilePictureUrl,
 	)
 	return i, err
 }

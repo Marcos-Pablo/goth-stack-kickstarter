@@ -42,6 +42,9 @@ func main() {
 	fs := http.FileServer(http.Dir("./assets"))
 	r.Handle("/assets/*", http.StripPrefix("/assets/", fs))
 
+	uploads := http.FileServer(http.Dir("./uploads"))
+	r.Handle("/uploads/*", http.StripPrefix("/uploads/", uploads))
+
 	r.Group(func(r chi.Router) {
 		r.Get("/sign-in", authH.SignInPage)
 		r.Post("/sign-in", authH.SignIn)
@@ -55,6 +58,7 @@ func main() {
 		r.Get("/", homeH.Index)
 		r.Get("/profile", profileH.ProfilePage)
 		r.Post("/profile", profileH.UpdateProfile)
+		r.Post("/avatar", profileH.UpdateAvatar)
 		r.Post("/change-password", profileH.ChangePassword)
 		r.Post("/delete-account", profileH.DeleteAccount)
 		r.Post("/sign-out", authH.SignOut)

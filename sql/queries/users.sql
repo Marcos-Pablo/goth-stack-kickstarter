@@ -51,3 +51,13 @@ RETURNING
 DELETE FROM users
 WHERE
   id = ?;
+
+-- name: UpdateProfilePicture :one
+UPDATE users
+SET
+  profile_picture_url = ?,
+  updated_at = ?
+WHERE
+  id = ?
+RETURNING
+  *;

@@ -9,6 +9,7 @@ import (
 	"github.com/Marcos-Pablo/goth-stack-kickstarter/internal/db"
 	"github.com/Marcos-Pablo/goth-stack-kickstarter/internal/logging"
 	"github.com/Marcos-Pablo/goth-stack-kickstarter/internal/session"
+	"github.com/Marcos-Pablo/goth-stack-kickstarter/internal/storage"
 	"github.com/alexedwards/scs/v2"
 )
 
@@ -18,6 +19,7 @@ type App struct {
 	Queries  *db.Queries
 	Logger   *slog.Logger
 	Sessions *scs.SessionManager
+	Storage  *storage.Storage
 }
 
 func New() (*App, error) {
@@ -41,6 +43,7 @@ func New() (*App, error) {
 	}
 
 	sessions := session.New(sqlDB, cfg)
+	storage := storage.New(cfg.UploadPath)
 
 	return &App{
 		Cfg:      cfg,
@@ -48,6 +51,7 @@ func New() (*App, error) {
 		Queries:  db.New(sqlDB),
 		Logger:   logger,
 		Sessions: sessions,
+		Storage:  storage,
 	}, nil
 }
 

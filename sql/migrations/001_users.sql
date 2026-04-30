@@ -5,7 +5,8 @@ CREATE TABLE users (
   updated_at TIMESTAMP NOT NULL,
   email TEXT NOT NULL UNIQUE,
   name TEXT NOT NULL,
-  password TEXT NOT NULL
+  password TEXT NOT NULL,
+  profile_picture_url TEXT
 );
 
 -- +goose Down

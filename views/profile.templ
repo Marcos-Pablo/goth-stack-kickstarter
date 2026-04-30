@@ -1,13 +1,62 @@
 package views
 
-templ Profile(user User, profile ProfileForm, changePassword ChangePasswordForm) {
+templ Profile(user User, avatar AvatarForm, profile ProfileForm, changePassword ChangePasswordForm) {
 	@AppShell("Profile", user) {
 		<div class="max-w-2xl mx-auto space-y-6">
+			@ProfileAvatarCard(user, avatar, "")
 			@ProfilePersonalInfoCard(profile, "")
 			@ProfileSecurityCard(changePassword, "")
 			@ProfileDangerZoneCard()
 		</div>
 	}
+}
+
+templ ProfileAvatarCard(user User, avatar AvatarForm, successMsg string) {
+	<div id="avatar-card" class="card bg-base-100 shadow-md">
+		<div class="card-body items-center text-center">
+			<h2 class="card-title">Profile Picture</h2>
+			if successMsg != "" {
+				<div class="alert alert-success">
+					<button type="button" class="btn btn-sm btn-ghost" data-close-alert>×</button>
+					{ successMsg }
+				</div>
+			}
+			<div class="avatar">
+				<div class="w-24 rounded-full">
+					if user.ProfilePicture != "" {
+						<img src={ user.ProfilePicture } alt={ user.Name } class="w-full h-full object-cover"/>
+					} else {
+						<div class="bg-neutral text-neutral-content w-full h-full flex items-center justify-center">
+							<span class="text-3xl font-bold">{ UserInitials(user.Name) }</span>
+						</div>
+					}
+				</div>
+			</div>
+			if avatar.GeneralError != "" {
+				<p class="label text-error">{ avatar.GeneralError }</p>
+			}
+			<form
+				hx-post="/avatar"
+				hx-target="#avatar-card"
+				hx-swap="outerHTML"
+				hx-encoding="multipart/form-data"
+				class="space-y-4 w-full"
+			>
+				<fieldset class="fieldset">
+					<input
+						type="file"
+						name="profile_picture"
+						class="file-input w-full"
+						accept="image/jpeg,image/png"
+						required
+					/>
+				</fieldset>
+				<div class="card-actions justify-end">
+					<button type="submit" class="btn btn-primary">Upload</button>
+				</div>
+			</form>
+		</div>
+	</div>
 }
 
 templ ProfilePersonalInfoCard(profile ProfileForm, successMsg string) {

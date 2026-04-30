@@ -14,9 +14,17 @@ templ AppShell(title string, user User) {
 					<div
 						tabindex="0"
 						role="button"
-						class="btn btn-ghost"
+						class="btn btn-ghost btn-circle min-h-10 h-10 w-10 p-0"
 					>
-						{ user.Name }
+						<div class="w-10 h-10 rounded-full overflow-hidden">
+							if user.ProfilePicture != "" {
+								<img src={ user.ProfilePicture } alt={ user.Name } class="w-full h-full object-cover"/>
+							} else {
+								<div class="bg-neutral text-neutral-content w-full h-full flex items-center justify-center">
+									<span class="text-sm font-bold">{ UserInitials(user.Name) }</span>
+								</div>
+							}
+						</div>
 					</div>
 					<ul
 						tabindex="0"

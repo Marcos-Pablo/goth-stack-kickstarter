@@ -1,10 +1,22 @@
 package views
 
-import "github.com/Marcos-Pablo/goth-stack-kickstarter/internal/validator"
+import (
+	"github.com/Marcos-Pablo/goth-stack-kickstarter/internal/validator"
+	"unicode/utf8"
+)
+
+func UserInitials(name string) string {
+	if name == "" {
+		return "?"
+	}
+	r, _ := utf8.DecodeRuneInString(name)
+	return string(r)
+}
 
 type User struct {
-	Email string
-	Name  string
+	Email          string
+	Name           string
+	ProfilePicture string
 }
 
 type SignInForm struct {
@@ -80,4 +92,8 @@ func (f *ChangePasswordForm) Validate() {
 	f.Check(validator.MaxChars(f.NewPassword, 72), "new_password", "At most 72 characters")
 
 	f.Check(f.NewPassword == f.NewPasswordConfirmation, "new_password_confirmation", "Passwords do not match")
+}
+
+type AvatarForm struct {
+	GeneralError string
 }

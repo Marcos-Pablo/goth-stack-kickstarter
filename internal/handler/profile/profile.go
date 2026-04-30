@@ -1,8 +1,10 @@
 package profile
 
 import (
+	"database/sql"
 	"errors"
 	"log/slog"
+	"mime"
 	"net/http"
 	"time"
 
@@ -27,13 +29,20 @@ func New(app *app.App) *Handler {
 
 func (h *Handler) ProfilePage(w http.ResponseWriter, r *http.Request) {
 	user, _ := middleware.UserFrom(r.Context())
-	handler.Render(w, r, http.StatusOK, views.Profile(views.User{
-		Email: user.Email,
-		Name:  user.Name,
-	}, views.ProfileForm{
-		Email: user.Email,
-		Name:  user.Name,
-	}, views.ChangePasswordForm{},
+
+	avatarURL := ""
+	if user.ProfilePictureUrl.Valid {
+		avatarURL = h.app.Storage.AvatarURL(user.ProfilePictureUrl.String)
+	}
+	handler.Render(w, r, http.StatusOK, views.Profile(
+		views.User{
+			Email:          user.Email,
+			Name:           user.Name,
+			ProfilePicture: avatarURL,
+		}, views.AvatarForm{}, views.ProfileForm{
+			Email: user.Email,
+			Name:  user.Name,
+		}, views.ChangePasswordForm{},
 	))
 }
 
@@ -146,6 +155,121 @@ func (h *Handler) DeleteAccount(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.Redirect(w, r, "/sign-in", http.StatusSeeOther)
+}
+
+func (h *Handler) UpdateAvatar(w http.ResponseWriter, r *http.Request) {
+	const maxMemory = 5 << 20     // 5 MB
+	const maxUploadSize = 5 << 20 // 5 MB
+
+	user, _ := middleware.UserFrom(r.Context())
+	http.MaxBytesReader(w, r.Body, maxUploadSize)
+
+	err := r.ParseMultipartForm(maxMemory)
+
+	avatarURL := ""
+	if user.ProfilePictureUrl.Valid {
+		avatarURL = h.app.Storage.AvatarURL(user.ProfilePictureUrl.String)
+	}
+
+	if err != nil {
+		slogchi.AddCustomAttributes(r, slog.Any("error", err))
+		handler.Render(w, r, http.StatusOK, views.ProfileAvatarCard(views.User{
+			Name:           user.Name,
+			Email:          user.Email,
+			ProfilePicture: avatarURL,
+		}, views.AvatarForm{
+			GeneralError: "invalid form data",
+		}, ""))
+		return
+	}
+
+	form := views.AvatarForm{}
+
+	file, header, err := r.FormFile("profile_picture")
+
+	if err != nil {
+		slogchi.AddCustomAttributes(r, slog.Any("error", err))
+		form.GeneralError = "Error uploading file"
+		handler.Render(w, r, http.StatusOK, views.ProfileAvatarCard(views.User{
+			Name:           user.Name,
+			Email:          user.Email,
+			ProfilePicture: avatarURL,
+		}, form, ""))
+		return
+	}
+	defer file.Close()
+
+	mediaType, _, err := mime.ParseMediaType(header.Header.Get("Content-Type"))
+
+	if err != nil {
+		slogchi.AddCustomAttributes(r, slog.Any("error", err))
+		form.GeneralError = "Invalid file type"
+		handler.Render(w, r, http.StatusOK, views.ProfileAvatarCard(views.User{
+			Name:           user.Name,
+			Email:          user.Email,
+			ProfilePicture: avatarURL,
+		}, form, ""))
+		return
+	}
+
+	if mediaType != "image/jpeg" && mediaType != "image/png" {
+		form.GeneralError = "Invalid file type"
+		handler.Render(w, r, http.StatusOK, views.ProfileAvatarCard(views.User{
+			Name:           user.Name,
+			Email:          user.Email,
+			ProfilePicture: avatarURL,
+		}, form, ""))
+		return
+	}
+
+	filename := h.app.Storage.NewAvatarFilename(mediaType)
+	avatarPath := h.app.Storage.AvatarPath(filename)
+
+	err = h.app.Storage.SaveFile(avatarPath, file)
+	if err != nil {
+		slogchi.AddCustomAttributes(r, slog.Any("error", err))
+		form.GeneralError = "Error uploading file"
+		handler.Render(w, r, http.StatusOK, views.ProfileAvatarCard(views.User{
+			Name:           user.Name,
+			Email:          user.Email,
+			ProfilePicture: avatarURL,
+		}, form, ""))
+		return
+	}
+
+	if err := h.app.Storage.DeleteFile(user.ProfilePictureUrl.String); err != nil {
+		slogchi.AddCustomAttributes(r, slog.Any("error", err))
+	}
+
+	_, err = h.app.Queries.UpdateProfilePicture(r.Context(), db.UpdateProfilePictureParams{
+		ID: user.ID,
+		ProfilePictureUrl: sql.NullString{
+			String: avatarPath,
+			Valid:  true,
+		},
+		UpdatedAt: time.Now(),
+	})
+
+	if err != nil {
+		slogchi.AddCustomAttributes(r, slog.Any("error", err))
+		form.GeneralError = "Error uploading file"
+		if cleanupErr := h.app.Storage.DeleteFile(avatarPath); cleanupErr != nil {
+			slogchi.AddCustomAttributes(r, slog.Any("error", cleanupErr))
+		}
+
+		handler.Render(w, r, http.StatusOK, views.ProfileAvatarCard(views.User{
+			Name:           user.Name,
+			Email:          user.Email,
+			ProfilePicture: avatarURL,
+		}, form, ""))
+		return
+	}
+
+	handler.Render(w, r, http.StatusOK, views.ProfileAvatarCard(views.User{
+		Name:           user.Name,
+		Email:          user.Email,
+		ProfilePicture: h.app.Storage.AvatarURL(avatarPath),
+	}, form, "Avatar updated successfully"))
 }
 
 func parseAndValidateProfileForm(r *http.Request) views.ProfileForm {
