@@ -51,11 +51,24 @@ templ ProfileAvatarCard(user User, avatar AvatarForm, successMsg string) {
 						required
 					/>
 				</fieldset>
-				<div class="card-actions justify-end">
-					<button type="submit" class="btn btn-primary">Upload</button>
-				</div>
-			</form>
+			<div class="card-actions justify-end">
+				<button type="submit" class="btn btn-primary">Upload</button>
+			</div>
+		</form>
 		</div>
+	</div>
+}
+
+templ ProfileAvatarCardWithOOB(user User, avatar AvatarForm, successMsg string) {
+	@ProfileAvatarCard(user, avatar, successMsg)
+	<div id="navbar-avatar" hx-swap-oob="true" class="w-10 h-10 rounded-full overflow-hidden">
+		if user.Avatar != "" {
+			<img src={ user.Avatar } alt={ user.Name } class="w-full h-full object-cover"/>
+		} else {
+			<div class="bg-neutral text-neutral-content w-full h-full flex items-center justify-center">
+				<span class="text-sm font-bold">{ UserInitials(user.Name) }</span>
+			</div>
+		}
 	</div>
 }
 

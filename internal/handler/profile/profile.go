@@ -34,7 +34,7 @@ func (h *Handler) ProfilePage(w http.ResponseWriter, r *http.Request) {
 	if user.AvatarPath.Valid {
 		avatarURL = h.app.Storage.AvatarURL(user.AvatarPath.String)
 	}
-		handler.Render(w, r, http.StatusOK, views.Profile(
+	handler.Render(w, r, http.StatusOK, views.Profile(
 		views.User{
 			Email:  user.Email,
 			Name:   user.Name,
@@ -250,7 +250,7 @@ func (h *Handler) UpdateAvatar(w http.ResponseWriter, r *http.Request) {
 
 	vUser.Avatar = h.app.Storage.AvatarURL(avatarPath)
 
-	handler.Render(w, r, http.StatusOK, views.ProfileAvatarCard(vUser, form, "Avatar updated successfully"))
+	handler.Render(w, r, http.StatusOK, views.ProfileAvatarCardWithOOB(vUser, form, "Avatar updated successfully"))
 }
 
 func parseAndValidateProfileForm(r *http.Request) views.ProfileForm {

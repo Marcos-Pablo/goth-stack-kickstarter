@@ -16,7 +16,7 @@ templ AppShell(title string, user User) {
 						role="button"
 						class="btn btn-ghost btn-circle min-h-10 h-10 w-10 p-0"
 					>
-						<div class="w-10 h-10 rounded-full overflow-hidden">
+						<div id="navbar-avatar" class="w-10 h-10 rounded-full overflow-hidden">
 							if user.Avatar != "" {
 								<img src={ user.Avatar } alt={ user.Name } class="w-full h-full object-cover"/>
 							} else {
